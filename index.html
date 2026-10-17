@@ -164,7 +164,9 @@ function emailParts(){
   const subject='Notes from our attendance check-in'+(s.call_date?' – '+fmt(s.call_date):'');
   const review = s.review_date ? fmt(s.review_date) : '[review date]';
   const body =
-`Hi ${fn},
+`Assalamu Alaykum wa Rahmatullahi wa Barakatuh
+
+Dear ${fn},
 
 Thanks for taking the time to talk with me today. I've attached a short record of what we discussed and what we agreed.
 
@@ -172,7 +174,7 @@ Please have a read. If anything doesn't match your understanding, or you'd like 
 
 We'll check in again on ${review} to see how things are going. If anything changes before then, let me know.
 
-Thanks,
+Jazakallahu khairan,
 ${signName(s.manager_name)}`;
   return {subject, body, to:s.staff_email};
 }
