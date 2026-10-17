@@ -53,6 +53,18 @@ button:disabled{opacity:.5;cursor:default}
 .emailbox{white-space:pre-wrap;background:var(--field);border:1px solid var(--line);border-radius:7px;padding:12px;font-size:14px;margin:0}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+@media (max-width:560px){
+  .wrap{padding-block:18px 150px;gap:16px}
+  section{padding:16px;gap:12px}
+  input[type=text],input[type=date],input[type=email],textarea{font-size:16px;padding:11px 12px}
+  .checks label{min-height:36px}
+  .checks input{width:20px;height:20px}
+  .bar-in{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .status{grid-column:1/-1}
+  #clearArea,#clearArea button,#pdfBtn{width:100%}
+  button{padding:12px 14px}
+  .confirm{justify-content:center}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -128,7 +140,7 @@ button:disabled{opacity:.5;cursor:default}
 
 <div class="bar"><div class="bar-in">
   <span class="status" id="status" aria-live="polite">Draft saves automatically in this browser.</span>
-  <span id="clearArea"><button type="button" id="clearBtn">Clear for next person</button></span>
+  <span id="clearArea"><button type="button" id="clearBtn">Clear form</button></span>
   <button type="button" class="primary" id="pdfBtn">Download PDF</button>
 </div></div>
 
@@ -161,7 +173,7 @@ function load(){ try{ const r=localStorage.getItem(KEY); if(r) apply(JSON.parse(
 
 function emailParts(){
   const s=collect(); const fn=firstName(s.staff_name)||'[name]';
-  const subject='Notes from our attendance check-in'+(s.call_date?' – '+fmt(s.call_date):'');
+  const subject='Attendance Check-In Notes';
   const review = s.review_date ? fmt(s.review_date) : '[review date]';
   const body =
 `Assalamu Alaykum wa Rahmatullahi wa Barakatuh
