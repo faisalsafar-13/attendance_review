@@ -53,6 +53,11 @@ button:disabled{opacity:.5;cursor:default}
 .emailbox{white-space:pre-wrap;background:var(--field);border:1px solid var(--line);border-radius:7px;padding:12px;font-size:14px;margin:0}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{position:relative;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);font-weight:600;font-size:14px;cursor:pointer}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg label:has(input:checked){background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 @media (max-width:560px){
   .wrap{padding-block:18px 150px;gap:16px}
   section{padding:16px;gap:12px}
@@ -78,6 +83,13 @@ button:disabled{opacity:.5;cursor:default}
   <form id="form" autocomplete="off">
     <div style="display:grid;gap:20px">
     <section>
+      <div class="f"><span class="lbl" id="topic_lbl">Check-in about</span>
+        <div class="seg" role="radiogroup" aria-labelledby="topic_lbl">
+          <label><input type="radio" name="topic" id="topic_absence" value="absence"> Absence</label>
+          <label><input type="radio" name="topic" id="topic_lateness" value="lateness"> Lateness</label>
+          <label><input type="radio" name="topic" id="topic_both" value="both" checked> Both</label>
+        </div>
+      </div>
       <div class="grid2">
         <div class="f"><label for="staff_name">Staff member</label><input type="text" id="staff_name" placeholder="Full name"></div>
         <div class="f"><label for="staff_id">Staff ID</label><input type="text" id="staff_id" placeholder="e.g. SA-0142"></div>
@@ -89,21 +101,23 @@ button:disabled{opacity:.5;cursor:default}
     </section>
 
     <section>
-      <div class="sec-head"><span class="num">1</span><h2>What we've seen</h2><span class="hint">Dates and arrival times discussed</span></div>
-      <div class="f"><label for="facts">Late arrivals discussed</label><textarea id="facts" placeholder="e.g. Mon 6 Oct 9:25, Mon 13 Oct 9:40, Wed 15 Oct 9:20"></textarea></div>
+      <div class="sec-head"><span class="num">1</span><h2>What we've seen</h2><span class="hint">Dates, times and reasons given</span></div>
+      <div class="f" id="wrap_absences"><label for="absences">Absences discussed</label><textarea id="absences" placeholder="e.g. Thu 2 Oct (unwell, no call), Mon 13 Oct (family emergency)"></textarea></div>
+      <div class="f" id="wrap_facts"><label for="facts">Late arrivals discussed</label><textarea id="facts" placeholder="e.g. Mon 6 Oct 9:25, Mon 13 Oct 9:40, Wed 15 Oct 9:20"></textarea></div>
     </section>
 
     <section>
       <div class="sec-head"><span class="num">2</span><h2>Understanding why</h2><span class="hint">Staff member's own words</span></div>
-      <div class="f"><label for="q1">Talk me through a morning when you were late.</label><textarea id="q1"></textarea></div>
+      <div class="f"><label for="q1">Talk me through what happened on the days you were absent or late.</label><textarea id="q1"></textarea></div>
       <div class="f"><label for="q2">When did this start, and what changed around then?</label><textarea id="q2"></textarea></div>
-      <div class="f"><label for="q3">Is there a pattern (certain days, after certain things)? Why might that be?</label><textarea id="q3"></textarea></div>
-      <div class="f"><label for="q4">Is anything outside work, or at work, making it harder to get in on time?</label><textarea id="q4"></textarea></div>
+      <div class="f"><label for="q3">Is there a pattern (certain days, around weekends or holidays)? Why might that be?</label><textarea id="q3"></textarea></div>
+      <div class="f"><label for="q4">Is anything outside work, or at work, making it harder to attend or get in on time?</label><textarea id="q4"></textarea></div>
+      <div class="f"><label for="q5">Did you report each absence or late arrival as expected? If not, what got in the way?</label><textarea id="q5"></textarea></div>
     </section>
 
     <section>
       <div class="sec-head"><span class="num">3</span><h2>Root cause</h2><span class="hint">Your summary of the underlying reason</span></div>
-      <div class="f"><label for="root_cause">What's really behind the late arrivals?</label><textarea id="root_cause"></textarea></div>
+      <div class="f"><label for="root_cause">What's really behind the absence and late arrivals?</label><textarea id="root_cause"></textarea></div>
       <div class="f"><span class="lbl">Support needs raised</span>
         <div class="checks">
           <label><input type="checkbox" id="flag_health"> Health or wellbeing</label>
@@ -121,7 +135,7 @@ button:disabled{opacity:.5;cursor:default}
       <div class="sec-head"><span class="num">4</span><h2>What we agreed</h2></div>
       <div class="f"><label for="suggestion">Staff member's suggestion: what would help?</label><textarea id="suggestion"></textarea></div>
       <div class="f"><label for="actions">Agreed action(s) and who does what</label><textarea id="actions"></textarea></div>
-      <div class="f"><label for="standard">Expected standard going forward</label><textarea id="standard" placeholder="e.g. At your desk and ready to start by 9:00am"></textarea></div>
+      <div class="f"><label for="standard">Expected standard going forward</label><textarea id="standard" placeholder="e.g. At your desk by 9:00am, and any absence reported by phone before 8:30am"></textarea></div>
     </section>
 
     <section>
@@ -148,7 +162,7 @@ button:disabled{opacity:.5;cursor:default}
 <script>
 const LOGO = document.querySelector('.logo').src;
 const KEY = 'safar-checkin-draft-v1';
-const TEXT_IDS = ['staff_name','staff_id','manager_name','call_date','review_date','facts','q1','q2','q3','q4','root_cause','suggestion','actions','standard','staff_email'];
+const TEXT_IDS = ['staff_name','staff_id','manager_name','call_date','review_date','absences','facts','q1','q2','q3','q4','q5','root_cause','suggestion','actions','standard','staff_email'];
 const FLAGS = [['flag_health','Health or wellbeing'],['flag_caring','Caring responsibilities'],['flag_travel','Travel / transport'],['flag_work','Workload or role'],['flag_other','Other'],['flag_followup','Longer follow-up meeting needed']];
 const $ = id => document.getElementById(id);
 const statusEl = $('status');
@@ -160,13 +174,32 @@ function fmt(iso){ if(!iso) return ''; const d=new Date(iso+'T12:00:00'); return
 function signName(n){ return (n||'').split(/[(,]/)[0].trim() || '[your name]'; }
 function firstName(n){ return (n||'').trim().split(/\s+/)[0] || ''; }
 
+const WORDS={
+  absence:{name:'Absence',days:'absent',harder:'attend',report:'absence',root:'absence'},
+  lateness:{name:'Lateness',days:'late',harder:'get in on time',report:'late arrival',root:'late arrivals'},
+  both:{name:'Absence and lateness',days:'absent or late',harder:'attend or get in on time',report:'absence or late arrival',root:'absence and late arrivals'}};
+function topic(){ const r=document.querySelector('input[name=topic]:checked'); return r?r.value:'both'; }
+function qText(t){ const w=WORDS[t]||WORDS.both; return {
+  q1:`Talk me through what happened on the days you were ${w.days}.`,
+  q2:'When did this start, and what changed around then?',
+  q3:'Is there a pattern (certain days, around weekends or holidays)? Why might that be?',
+  q4:`Is anything outside work, or at work, making it harder to ${w.harder}?`,
+  q5:`Did you report each ${w.report} as expected? If not, what got in the way?`,
+  root_cause:`What's really behind the ${w.root}?`}; }
+function applyTopic(){
+  const t=topic(), q=qText(t);
+  Object.keys(q).forEach(id=>{ const l=document.querySelector('label[for="'+id+'"]'); if(l) l.textContent=q[id]; });
+  $('wrap_absences').hidden = t==='lateness';
+  $('wrap_facts').hidden = t==='absence';
+}
 function collect(){
   const s={}; TEXT_IDS.forEach(id=>s[id]=$(id).value);
-  FLAGS.forEach(([id])=>s[id]=$(id).checked); return s;
+  FLAGS.forEach(([id])=>s[id]=$(id).checked); s.topic=topic(); return s;
 }
 function apply(s){
   TEXT_IDS.forEach(id=>{ if(s[id]!=null) $(id).value=s[id]; });
   FLAGS.forEach(([id])=>{ if(s[id]!=null) $(id).checked=!!s[id]; });
+  if(s.topic && $('topic_'+s.topic)) $('topic_'+s.topic).checked=true;
 }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); }catch(e){} }
 function load(){ try{ const r=localStorage.getItem(KEY); if(r) apply(JSON.parse(r)); }catch(e){} }
@@ -202,11 +235,12 @@ if(!$('call_date').value) $('call_date').value=today();
 load();
 if(!$('call_date').value) $('call_date').value=today();
 if(!$('review_date').value) $('review_date').value=plusDays($('call_date').value||today(),28);
+applyTopic();
 renderEmail();
 
 document.getElementById('form').addEventListener('input',e=>{
   if(e.target.id==='call_date' && e.target.value) $('review_date').value=plusDays(e.target.value,28);
-  save(); renderEmail(); setStatus('Draft saved in this browser.');
+  applyTopic(); save(); renderEmail(); setStatus('Draft saved in this browser.');
 });
 document.getElementById('form').addEventListener('submit',e=>e.preventDefault());
 
@@ -228,6 +262,7 @@ function bindClear(){
       const mgr=$('manager_name').value;
       TEXT_IDS.forEach(id=>$(id).value=''); FLAGS.forEach(([id])=>$(id).checked=false);
       $('manager_name').value=mgr||''; $('call_date').value=today(); $('review_date').value=plusDays(today(),28);
+      $('topic_both').checked=true; applyTopic();
       save(); renderEmail(); restore(); setStatus('Form cleared for the next person.'); window.scrollTo({top:0});
     });
     $('noClear').addEventListener('click',restore);
@@ -297,24 +332,24 @@ function buildPdf(){
   head();
   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...DARK);doc.text('Attendance Check-in',M,y);y+=16;
   doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(...GREY);
-  doc.text('A record of our conversation about recent late arrivals and what we agreed.',M,y);y+=26;
+  doc.text('A record of our conversation about recent '+(WORDS[s.topic]||WORDS.both).root+', and what we agreed.',M,y);y+=26;
 
   pair('Staff member',s.staff_name,'Staff ID',s.staff_id);
   pair('Conducted by',s.manager_name,'Date of call',fmt(s.call_date));
-  box('Review date',fmt(s.review_date),M,(CW-14)/2); y+=14;
+  pair('Review date',fmt(s.review_date),'Check-in about',(WORDS[s.topic]||WORDS.both).name);
 
-  sectionTitle(1,"What we've seen",'Dates and arrival times discussed');
-  box('Late arrivals discussed',s.facts,null,null,36); y+=16;
+  sectionTitle(1,"What we've seen",'Dates, times and reasons given');
+  if(s.topic!=='lateness'){ box('Absences discussed',s.absences,null,null,36); y+=14; }
+  if(s.topic!=='absence'){ box('Late arrivals discussed',s.facts,null,null,36); y+=14; }
+  y+=2;
 
   sectionTitle(2,'Understanding why',"Staff member's own words");
-  [['Talk me through a morning when you were late.','q1'],['When did this start, and what changed around then?','q2'],
-   ['Is there a pattern (certain days, after certain things)? Why might that be?','q3'],
-   ['Is anything outside work, or at work, making it harder to get in on time?','q4']]
+  (()=>{const q=qText(s.topic);return ['q1','q2','q3','q4','q5'].map(id=>[q[id],id]);})()
    .forEach(([q,id])=>{ box(q,s[id],null,null,36); y+=14; });
   y+=2;
 
   sectionTitle(3,'Root cause','Summary of the underlying reason');
-  box("What's really behind the late arrivals?",s.root_cause,null,null,36); y+=14;
+  box(qText(s.topic).root_cause,s.root_cause,null,null,36); y+=14;
   ensure(50);
   doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...DARK);doc.text('Support needs raised',M,y);y+=14;
   const colW=CW/3;
